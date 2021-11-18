@@ -11,27 +11,31 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: BlocProvider(
-        create: (context) => CounterBloc(),
-        child: HomePage(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => CounterBloc()),
+        BlocProvider(create: (context) => CounterCubit())
+      ],
+      child: MaterialApp(
+        home: HomePage(),
       ),
     );
   }
 }
 
 class HomePage extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
-    var bloc = BlocProvider.of<CounterBloc>(context);
+    // var bloc = BlocProvider.of<CounterBloc>(context);
+    var bloc = context.read<CounterBloc>();
+    var cubit = context.read<CounterCubit>();
+
     print("build");
 
     return Scaffold(
       body: Center(
-        child: BlocBuilder<CounterBloc, int>(
-          builder: (context, snapshot) => Text("$snapshot")
-        ),
+        child: BlocBuilder<CounterCubit, int>(
+            builder: (context, snapshot) => Text("$snapshot")),
       ),
       floatingActionButton: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -39,12 +43,12 @@ class HomePage extends StatelessWidget {
         children: [
           ElevatedButton(
               onPressed: () {
-                bloc.add('inc');
+                cubit.increment();
               },
               child: Text("Inc ++")),
           ElevatedButton(
               onPressed: () {
-                bloc.add('dec');
+                cubit.decrement();
               },
               child: Text("Dec --"))
         ],

@@ -14,3 +14,12 @@ class CounterBloc extends Bloc<String, int>{
   }
 
 }
+
+class CounterCubit extends Cubit<int> {
+  CounterCubit() : super(0);
+  int _counter = 0;
+
+  void increment () => emit(_counter++);
+  void decrement () => emit(_counter--);
+
+}
