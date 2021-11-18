@@ -1,4 +1,5 @@
-import 'package:app_bloc2/bloc/counter_bloc.dart';
+import 'package:app_bloc2/counter/counter_bloc.dart';
+import 'package:app_bloc2/counter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -26,23 +27,19 @@ class MyApp extends StatelessWidget {
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // var bloc = BlocProvider.of<CounterBloc>(context);
-    var bloc = context.read<CounterBloc>();
-    var cubit = context.read<CounterCubit>();
-
-    print("build");
-
     return Scaffold(
       body: Center(
-        child: BlocConsumer<CounterCubit, int>(
-          listenWhen: (prev, curr) => curr > 5 ? true : false,
-          listener: (context, state) => ScaffoldMessenger.of(context).showSnackBar(
+        child: BlocConsumer<CounterBloc, CounterState> (
+          listenWhen: (prev, curr) => curr.number > 5 ? true : false,
+          listener: (context, snapshot) => ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              duration: Duration(milliseconds: 300),
-              content: Text("Hai"),
+              duration: Duration(milliseconds: 500),
+              content: Text("Upper 5"),
             )
           ),
-          builder: (context, state) => Text("$state")
+          builder: (context, snapshot) =>  Text("${snapshot.number}", style: TextStyle(
+            fontSize: 700
+          ),),
         )
       ),
       floatingActionButton: Column(
@@ -50,15 +47,11 @@ class HomePage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           ElevatedButton(
-              onPressed: () {
-                cubit.increment();
-              },
-              child: Text("Inc ++")),
+              onPressed: () => context.read<CounterBloc>().add(IncrementEvent()),
+              child: Text("Inc")),
           ElevatedButton(
-              onPressed: () {
-                cubit.decrement();
-              },
-              child: Text("Dec --"))
+              onPressed: () => context.read<CounterBloc>().add(DecrementEvent()),
+              child: Text("Dec"))
         ],
       ),
     );
