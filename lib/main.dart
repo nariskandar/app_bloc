@@ -34,8 +34,16 @@ class HomePage extends StatelessWidget {
 
     return Scaffold(
       body: Center(
-        child: BlocBuilder<CounterCubit, int>(
-            builder: (context, snapshot) => Text("$snapshot")),
+        child: BlocConsumer<CounterCubit, int>(
+          listenWhen: (prev, curr) => curr > 5 ? true : false,
+          listener: (context, state) => ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              duration: Duration(milliseconds: 300),
+              content: Text("Hai"),
+            )
+          ),
+          builder: (context, state) => Text("$state")
+        )
       ),
       floatingActionButton: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
